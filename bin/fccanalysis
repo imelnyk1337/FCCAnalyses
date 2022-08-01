@@ -2,6 +2,10 @@
 
 
 if __name__ == "__main__":
+#  import cProfile
+#  import pstats
+#  profiler = cProfile.Profile()
+#  profiler.enable()
   import argparse
   import sys
   parser = argparse.ArgumentParser('FCCAnalyses parser')
@@ -26,3 +30,6 @@ if __name__ == "__main__":
 
   from config.FCCAnalysisRun import run
   run(parser)
+#  profiler.disable()
+#  stats = pstats.Stats(profiler).sort_stats("cumtime")
+#  stats.print_stats()

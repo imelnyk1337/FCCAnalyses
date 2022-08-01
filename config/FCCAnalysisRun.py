@@ -9,6 +9,8 @@ import importlib.util
 from array import array
 from config.common_defaults import deffccdicts
 import datetime
+#import cProfile as cprof
+#import pstats as pst
 
 print ("----> Load cxx analyzers from libFCCAnalyses... ",)
 ROOT.gSystem.Load("libFCCAnalyses")
@@ -337,7 +339,7 @@ def runRDF(rdfModule, inputlist, outFile, nevt, args):
     branchListVec = ROOT.vector('string')()
     for branchName in branchList:
         branchListVec.push_back(branchName)
-
+#   print("Snapshot starts")
     df2.Snapshot("events", outFile, branchListVec)
 
 
@@ -456,6 +458,7 @@ def runLocal(rdfModule, fileList, args):
                 nevents_meta += tf.eventsProcessed.GetVal()
                 break
         tt=tf.Get("events")
+        tt.Print("clusters")
         nevents_local+=tt.GetEntries()
 
     # adjust number of events in case --nevents was specified
@@ -469,7 +472,11 @@ def runLocal(rdfModule, fileList, args):
         outFile+=args.output
     else:
         outFile=args.output
+    
     start_time = time.time()
+    #profiler = cprof.Profile()
+    #profiler.enable()
+    
     #run RDF
     runRDF(rdfModule, fileListRoot, outFile, nevents_local, args)
 
@@ -485,6 +492,9 @@ def runLocal(rdfModule, fileList, args):
     outf.Close()
 
     elapsed_time = time.time() - start_time
+    #profiler.disable()
+    #stats = pst.Stats(profiler).sort_stats("ncalls")
+    #stats.print_stats()
     print  ("==============================SUMMARY==============================")
     print  ("Elapsed time (H:M:S)     :  ",time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
     print  ("Events Processed/Second  :  ",int(nevents_local/elapsed_time))

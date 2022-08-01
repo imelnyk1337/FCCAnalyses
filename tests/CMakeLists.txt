@@ -3,6 +3,8 @@ add_subdirectory(unittest)
 
 add_subdirectory(benchmark)
 
+add_subdirectory(perf)
+
 function(add_integration_test _testname)
 
   add_test(NAME ${_testname} 
