@@ -40,7 +40,7 @@ TChain* retrieveData(int breakPoint) {
 //        char* var = file.data();
 //        std::vector<char> writable(file.begin(), file.end());
 //        writable.push_back('\0');
-//        files.push_back(entry.path().string());
+//        files.push_back(entry.path().str../tests/perf/perf.cpping());
 //        rootChain->Add(&writable[0]);
         rootChain->Add(file.c_str());
         std::cout << "  File " << file.c_str() << " was added to the ROOT::TChain object " << std::endl;
@@ -154,17 +154,20 @@ void perf(int nThreads) {
     "zed_leptonic_recoil_m",
     "zed_leptonic_charge"});
 
+//    TObjArray* filesArray = chainZH->GetListOfFiles();
+//    Int_t nFiles = filesArray->GetEntries();
+//    std::cout << "N of files is " << nFiles << std::endl;
+
+//    long filesSize = 0.0;
+//
+//    for (Int_t i = 0; i < nFiles; i++) {
+//        filesSize += filesArray[i].GetSize();
+//    }
+//
+//    std::cout << "Size of all the files is " << filesSize << std::endl;
 
 
-
-
-
-//    TCanvas* c = new TCanvas();
-//    df2->Print();
-//    df2->Draw();
-//    c->Print(outputDir + std::string("testHisto.pdf"));
-
-//    delete c;
+    delete chainZH;
 
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
     std::cout << "Time: " << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << std::endl;
@@ -173,7 +176,7 @@ void perf(int nThreads) {
 
 int main(int args, char* argv[]) {
 
-    std::cout << "Start" << std::endl;
+    std::cout << "Programme start" << std::endl;
 
     int nCPUS = atoi(argv[1]);
 
@@ -181,6 +184,6 @@ int main(int args, char* argv[]) {
 
     perf(nCPUS);
 
-    std::cout << "End" << std::endl;
+    std::cout << "Programme end" << std::endl;
     return 0;
 }
