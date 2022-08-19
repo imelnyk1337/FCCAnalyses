@@ -1,4 +1,6 @@
 #include "ROOT/RDataFrame.hxx"
+#include "ROOT/RDFHelpers.hxx"
+#include "ROOT/RLogger.hxx"
 #include <iostream>
 #include <chrono>
 #include "stdlib.h"
@@ -12,6 +14,7 @@
 #include <filesystem>
 //#include "TSeqCollection.h"
 #include "TROOT.h"
+
 //#include "TIter.h"
 
 
@@ -88,12 +91,12 @@ TChain* retrieveData(int breakPoint) {
 
 void perf(int nThreads) {
 
-    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-
-
 
     auto reconstructedParticle = [] (ROOT::VecOps::RVec<int> index, ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in) {
         return FCCAnalyses::ReconstructedParticle::get(index, in); };
+//
+//    auto zed_leptonic_recoil_m_cut = [] (ROOT::VecOps::RVec<float> var) {
+//    return var.size() > 0;};
 
 
 
@@ -105,72 +108,26 @@ void perf(int nThreads) {
 
 //    std::string rootFiles = inputDir + std::string("*");
 
+    auto verbosity = ROOT::Experimental::RLogScopedVerbosity(ROOT::Detail::RDF::RDFLogChannel(), ROOT::Experimental::ELogLevel::kInfo);
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
     ROOT::RDataFrame df(*chainZH);
 
     auto df2 = df
     .Alias("Muon0", "Muon#0.index")
     .Define("muons", FCCAnalyses::ReconstructedParticle::get, {"Muon0", "ReconstructedParticles"})
-    .Define("selected_muons", FCCAnalyses::ReconstructedParticle::sel_pt(10.), {"muons"});
-//    .Define("selected_muons_pt", FCCAnalyses::ReconstructedParticle::get_pt, {"selected_muons"}) +++
-//
-//    .Define("selected_muons_y", FCCAnalyses::ReconstructedParticle::get_y, {"selected_muons"}) +++
-//
-//
-//    .Define("selected_muons_e", FCCAnalyses::ReconstructedParticle::get_e, {"selected_muons"}) +++
-//    .Define("zed_leptonic", FCCAnalyses::ReconstructedParticle::resonanceBuilder(91.), {"selected_muons"}) +++
-//    .Define("zed_leptonic_m", FCCAnalyses::ReconstructedParticle::get_mass, {"zed_leptonic"}) +++
-//    .Define("zed_leptonic_pt", FCCAnalyses::ReconstructedParticle::get_pt, {"zed_leptonic"}) +++
-//    .Define("zed_leptonic_recoil", FCCAnalyses::ReconstructedParticle::recoilBuilder(240.), {"zed_leptonic"}) +++
-//    .Define("zed_leptonic_recoil_m", FCCAnalyses::ReconstructedParticle::get_mass, {"zed_leptonic_recoil"}) +++
-//    .Define("zed_leptonic_charge", FCCAnalyses::ReconstructedParticle::get_charge, {"zed_leptonic"}) +++
-//    .Filter("zed_leptonic_recoil_m.size() > 0", "zed_leptonic_recoil_m") +++
-//    .Snapshot("events", std::string(outputDir) + std::string(outputFile), { +++
-//    "muons",
-//    "selected_muons",
-//    "selected_muons_pt",
-//    "selected_muons_y",
-//    "selected_muons_e",
-//    "zed_leptonic",
-//    "zed_leptonic_m",
-//    "zed_leptonic_pt",
-//    "zed_leptonic_recoil",
-//    "zed_leptonic_recoil_m",
-//    "zed_leptonic_charge"});
-
-    auto df3 = df2
-    .Define("selected_muons_pt", FCCAnalyses::ReconstructedParticle::get_pt, {"selected_muons"});
-
-    auto df4 = df3
-    .Define("selected_muons_y", FCCAnalyses::ReconstructedParticle::get_y, {"selected_muons"});
-
-    auto df5 = df4
-    .Define("selected_muons_p", FCCAnalyses::ReconstructedParticle::get_p, {"selected_muons"});
-
-    auto df6 = df5
-    .Define("selected_muons_e", FCCAnalyses::ReconstructedParticle::get_e, {"selected_muons"});
-
-    auto df7 = df6
-    .Define("zed_leptonic", FCCAnalyses::ReconstructedParticle::resonanceBuilder(91.), {"selected_muons"});
-
-    auto df8 = df7
-    .Define("zed_leptonic_m", FCCAnalyses::ReconstructedParticle::get_mass, {"zed_leptonic"});
-
-    auto df9 = df8
-    .Define("zed_leptonic_pt", FCCAnalyses::ReconstructedParticle::get_pt, {"zed_leptonic"});
-
-    auto df10 = df9
-    .Define("zed_leptonic_recoil", FCCAnalyses::ReconstructedParticle::recoilBuilder(240.), {"zed_leptonic"});
-
-    auto df11 = df10
-    .Define("zed_leptonic_recoil_m", FCCAnalyses::ReconstructedParticle::get_mass, {"zed_leptonic_recoil"});
-
-    auto df12 = df11
-    .Define("zed_leptonic_charge", FCCAnalyses::ReconstructedParticle::get_charge, {"zed_leptonic"});
-
-    auto df13 = df12
-    .Filter("zed_leptonic_recoil_m.size() > 0", "zed_leptonic_recoil_m");
-
-    auto df14 = df13
+    .Define("selected_muons", FCCAnalyses::ReconstructedParticle::sel_pt(10.), {"muons"})
+    .Define("selected_muons_pt", FCCAnalyses::ReconstructedParticle::get_pt, {"selected_muons"})
+    .Define("selected_muons_y", FCCAnalyses::ReconstructedParticle::get_y, {"selected_muons"})
+    .Define("selected_muons_p", FCCAnalyses::ReconstructedParticle::get_p, {"selected_muons"})
+    .Define("selected_muons_e", FCCAnalyses::ReconstructedParticle::get_e, {"selected_muons"})
+    .Define("zed_leptonic", FCCAnalyses::ReconstructedParticle::resonanceBuilder(91.), {"selected_muons"})
+    .Define("zed_leptonic_m", FCCAnalyses::ReconstructedParticle::get_mass, {"zed_leptonic"})
+    .Define("zed_leptonic_pt", FCCAnalyses::ReconstructedParticle::get_pt, {"zed_leptonic"})
+    .Define("zed_leptonic_recoil", FCCAnalyses::ReconstructedParticle::recoilBuilder(240.), {"zed_leptonic"})
+    .Define("zed_leptonic_recoil_m", FCCAnalyses::ReconstructedParticle::get_mass, {"zed_leptonic_recoil"})
+    .Define("zed_leptonic_charge", FCCAnalyses::ReconstructedParticle::get_charge, {"zed_leptonic"})
+//    .Filter(zed_leptonic_recoil_m_cut, {"zed_leptonic_recoil_m"})
+    .Filter("zed_leptonic_recoil_m.size()>0")
     .Snapshot("events", std::string(outputDir) + std::string(outputFile), {
     "muons",
     "selected_muons",
@@ -185,47 +142,7 @@ void perf(int nThreads) {
     "zed_leptonic_recoil_m",
     "zed_leptonic_charge"});
 
-//    TObjArray* filesArray = chainZH->GetListOfFiles();
-//    Int_t nFiles = filesArray->GetEntries();
-//    std::cout << "N of files is " << nFiles << std::endl;
-
-//    TSeqCollection* listOfFiles = gROOT->GetListOfFiles();
-//    TIter next(listOfFiles);
-//    TGlobal* global;
-//    int indexLast = listOfFiles->GetLast();
-//    TFile* file;
-//    while (file = (TFile*)next()) {
-
-//        TObject* obj =  listOfFiles->At(0);
-//        TFile* file = dynamic_cast<TFile*>(obj);
-//        std::cout << "Number of opened files: " << indexLast << std::endl;
-//        std::cout << "Class name: " << file->ClassName() << "    " << "Title: " << file->GetTitle() << "    " << "Name: " << file->GetName() << std::endl;
-//    }
-
-
-
-//    long filesSize = 0.0;
-//    gROOT->
-
-//    for (Int_t i = 0; i < nFiles; i++) {
-////        auto file = filesArray[i];
-//
-////        TFile* rootFile = static_cast<TFile*>(filesArray->At(i));
-//        std::cout << "Name = " << filesArray->At(i)->GetName() << std::endl;
-//        std::cout << "Class = " << filesArray->At(i)->ClassName() << std::endl;
-//        std::cout << "Title = " << filesArray->At(i)->GetTitle() << std::endl;
-//
-//        TFile* rootFile = new TFile(filesArray->At(i)->GetTitle());
-//
-//        std::cout << "Bytes = " << rootFile->GetSize() << std::endl;
-//        filesSize += rootFile->GetSize();
-//        std::cout << "ROOT TFile* " << rootFile << std::endl;
-//    }
-//
-//    //    std::cout << "gROOT: " << std::endl;
-//
-//    std::cout << "Size of all the files is " << filesSize << std::endl;
-
+    ROOT::RDF::SaveGraph(df, "./computation_graph_cpp.dot");
 
     delete chainZH;
 
