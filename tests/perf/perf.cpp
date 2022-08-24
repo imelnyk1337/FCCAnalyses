@@ -154,7 +154,7 @@ void perf(int nThreads) {
 
 int main(int args, char* argv[]) {
 
-    std::cout << "Programme start" << std::endl;
+    std::cout << "Start" << std::endl;
 
     int nCPUS = atoi(argv[1]);
 
@@ -162,6 +162,6 @@ int main(int args, char* argv[]) {
 
     perf(nCPUS);
 
-    std::cout << "Programme end" << std::endl;
+    std::cout << "End" << std::endl;
     return 0;
 }
