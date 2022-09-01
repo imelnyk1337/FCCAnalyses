@@ -1,9 +1,9 @@
 
-add_subdirectory(unittest)
+#add_subdirectory(unittest)
 
-add_subdirectory(benchmark)
+#add_subdirectory(benchmark)
 
-add_subdirectory(perf)
+add_subdirectory(performance)
 
 function(add_integration_test _testname)
 
