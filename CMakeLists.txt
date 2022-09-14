@@ -43,6 +43,8 @@ set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDE_DIR include CACHE PATH
   "Installation directory for header files")
 
+set(CMAKE_CXX_FLAGS "-O3 -Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
 
 #--- Declare C++ Standard -----------------------------------------------------
 

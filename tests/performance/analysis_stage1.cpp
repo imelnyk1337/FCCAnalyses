@@ -19,7 +19,7 @@
 
 
 //#define nCPUS 4
-#define outputDir "/home/imelnyk/FCCAnalyses/build/tests/perf/"
+#define outputDir "/home/imelnyk/FCCAnalyses/build/tests/performance/"
 #define outputFile "outputTest.root"
 //#define inputDir "/home/imelnyk/FCCAnalyses/p8_ee_ZH_ecm240/"
 #define inputDir "/tmp/fccperf/p8_ee_ZH_ecm240/"
@@ -105,6 +105,7 @@ void perf(int nThreads) {
     int eventsTotal = chainZH->GetEntries();
 
     ROOT::EnableImplicitMT(nThreads);
+    ROOT::EnableThreadSafety();
 
 //    std::string rootFiles = inputDir + std::string("*");
 
